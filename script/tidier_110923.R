@@ -163,7 +163,7 @@ color_scheme <- c(A = "#a06aa0", O = '#db596b', P = '#e79652', S = '#85cdc4', V 
 
 #Figure 2
 
-a <- ggplot() +
+ggplot() +
   theme_bw() +
   geom_abline(aes(slope = 1, intercept = 0))+
   geom_point(data = inv_dat3, aes(x = s_relfit, y = mean, col = Sp, group = Sp)) + 
@@ -172,8 +172,7 @@ a <- ggplot() +
   theme(strip.background = element_blank(), strip.text = element_text(size = 12, hjust = 0), axis.text = element_text(size = 11, colour = 'black'), axis.title = element_text(size = 12, colour = 'black'), legend.position = "bottom") +
   ylab("Relative invader growth rate from coinvasions") +
   xlab("Relative invader growth rate from single invasions") +
-  labs(colour = "Invading species", fill = "Invading species") +scale_fill_manual(values = color_scheme) +scale_color_manual(values = color_scheme) +
-  labs(title = '(a)')
+  labs(colour = "Invading species", fill = "Invading species") +scale_fill_manual(values = color_scheme) +scale_color_manual(values = color_scheme) 
 
 #do spearmans rank correlation
 
@@ -193,58 +192,6 @@ cor.test(inv_dat3_o$mean, inv_dat3_o$s_relfit, method = 'spearman') #non-sig
 cor.test(inv_dat3_s$mean, inv_dat3_s$s_relfit, method = 'spearman') #non-sig
 
 p.adjust(c(0.02365,0.1862,0.9879,0.432967,0.221978), method = 'fdr')
-
-#
-
-p <- ggplot(inv_dat3_p, aes(x = s_relfit, y = mean)) +
-  theme_bw() +
-  geom_point(col = '#e79652') +
-  geom_abline(aes(slope = 1, intercept = 0)) + 
-  geom_smooth(method = "lm", col = '#e79652', fill = '#e79652') +
-  theme(strip.background = element_blank(), strip.text = element_text(size = 10, hjust = 0), axis.text = element_text(size = 10, colour = 'black'), axis.title.y = element_text(size = 10, colour = 'black'), legend.position = "bottom", title = element_text(size = 10), axis.title.x = element_blank()) +
-  ylab("Relative invader growth\nrate from coinvasions") +
-  labs(title = expression(`(d)`~italic("Pseudomonas")~`sp.`))
-
-a <- ggplot(inv_dat3_a, aes(x = s_relfit, y = mean)) +
-  theme_bw()+
-  theme(strip.background = element_blank(), strip.text = element_text(size = 10, hjust = 0), axis.text = element_text(size = 10, colour = 'black'), axis.title.y = element_text(size = 10, colour = 'black'), legend.position = "bottom", title = element_text(size = 10), axis.title.x = element_blank()) +
-  geom_point(col = '#a06aa0') +
-  geom_abline(aes(slope = 1, intercept = 0)) + 
-  geom_smooth(method = "lm", col = '#a06aa0', fill = '#a06aa0') +
-  labs(title = expression(`(b)`~italic("Achromobacter")~`sp.`))+
-  ylab("Relative invader growth\nrate from coinvasions") 
-
-v <- ggplot(inv_dat3_v, aes(x = s_relfit, y = mean)) +
-  theme_bw()+
-  theme(strip.background = element_blank(), strip.text = element_text(size = 10, hjust = 0), axis.text = element_text(size = 10, colour = 'black'), axis.title = element_text(size = 10, colour = 'black'), legend.position = "bottom", title = element_text(size = 10)) +
-  geom_point(col = '#31646f') +
-  geom_abline(aes(slope = 1, intercept = 0)) + 
-  geom_smooth(method = "lm", col = '#31646f', fill = '#31646f') +
-  labs(title = expression(`(f)`~italic("Variovorax")~`sp.`))+
-  ylab("Relative invader growth\nrate from coinvasions") +
-  xlab("Relative invader growth\nrate from single invasions")
-
-s <- ggplot(inv_dat3_s, aes(x = s_relfit, y = mean)) +
-  theme_bw()+
-  theme(strip.background = element_blank(), strip.text = element_text(size = 10, hjust = 0), axis.text = element_text(size = 10, colour = 'black'), axis.title.y = element_blank(), legend.position = "bottom", title = element_text(size = 10), axis.title.x = element_text(size = 10, colour = 'black')) +
-  geom_point(col = '#85cdc4') +
-  geom_abline(aes(slope = 1, intercept = 0)) + 
-  geom_smooth(method = "lm", col = '#85cdc4', fill = '#85cdc4') +
-  labs(title = expression(`(e)`~italic("Stenotrophomonas")~`sp.`)) +
-  xlab("Relative invader growth\nrate from single invasions")
-
-o <- ggplot(inv_dat3_o, aes(x = s_relfit, y = mean)) +
-  theme_bw()+
-  theme(strip.background = element_blank(), strip.text = element_text(size = 10, hjust = 0), axis.text = element_text(size = 10, colour = 'black'), axis.title = element_blank(), legend.position = "bottom", title = element_text(size = 10)) +
-  geom_point(col = '#db596b') +
-  geom_abline(aes(slope = 1, intercept = 0)) + 
-  geom_smooth(method = "lm", col = '#db596b', fill = '#db596b') +
-  labs(title = expression(`(c)`~italic("Ochrobactrum")~`sp.`))+
-  ylab("Relative invader growth rate from coinvasions") 
-
-psavo <- a + o + p + s + v + patchwork::plot_layout(ncol = 2)
-
-a + psavo + patchwork::plot_layout()
 
 #
 
