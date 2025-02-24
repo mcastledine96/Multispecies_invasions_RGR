@@ -140,6 +140,8 @@ inv_dat3$s_relfit <- inv_v2$rel_fit_mean
 
 #see if relative fitness measures correlated when invading one vs multiple (one duplicate combination is each species into the four resident combination)
 
+inv_dat3 <- filter(inv_dat3, ! res.div == 4)
+
 is.numeric(inv_dat3$res.div)
 
 m1 <- lm(mean ~ s_relfit * Sp, data = inv_dat3)
@@ -161,7 +163,7 @@ color_scheme <- c(A = "#a06aa0", O = '#db596b', P = '#e79652', S = '#85cdc4', V 
 
 #Figure 2
 
-ggplot() +
+a <- ggplot() +
   theme_bw() +
   geom_abline(aes(slope = 1, intercept = 0))+
   geom_point(data = inv_dat3, aes(x = s_relfit, y = mean, col = Sp, group = Sp)) + 
@@ -170,7 +172,81 @@ ggplot() +
   theme(strip.background = element_blank(), strip.text = element_text(size = 12, hjust = 0), axis.text = element_text(size = 11, colour = 'black'), axis.title = element_text(size = 12, colour = 'black'), legend.position = "bottom") +
   ylab("Relative invader growth rate from coinvasions") +
   xlab("Relative invader growth rate from single invasions") +
-  labs(colour = "Invading species", fill = "Invading species") +scale_fill_manual(values = color_scheme) +scale_color_manual(values = color_scheme) 
+  labs(colour = "Invading species", fill = "Invading species") +scale_fill_manual(values = color_scheme) +scale_color_manual(values = color_scheme) +
+  labs(title = '(a)')
+
+#do spearmans rank correlation
+
+cor.test(inv_dat3$mean, inv_dat3$s_relfit, method = 'spearman')
+cor.test(inv_dat3$mean, inv_dat3$s_relfit, method = 'pearson')
+#non-sig
+inv_dat3_p <- filter(inv_dat3, Sp == 'P')
+inv_dat3_v <- filter(inv_dat3, Sp == 'V')
+inv_dat3_o <- filter(inv_dat3, Sp == 'O')
+inv_dat3_s <- filter(inv_dat3, Sp == 'S')
+inv_dat3_a <- filter(inv_dat3, Sp == 'A')
+
+cor.test(inv_dat3_p$mean, inv_dat3_p$s_relfit, method = 'spearman') #sig
+cor.test(inv_dat3_v$mean, inv_dat3_v$s_relfit, method = 'spearman') #non-sig
+cor.test(inv_dat3_a$mean, inv_dat3_a$s_relfit, method = 'spearman') #non-sig
+cor.test(inv_dat3_o$mean, inv_dat3_o$s_relfit, method = 'spearman') #non-sig
+cor.test(inv_dat3_s$mean, inv_dat3_s$s_relfit, method = 'spearman') #non-sig
+
+p.adjust(c(0.02365,0.1862,0.9879,0.432967,0.221978), method = 'fdr')
+
+#
+
+p <- ggplot(inv_dat3_p, aes(x = s_relfit, y = mean)) +
+  theme_bw() +
+  geom_point(col = '#e79652') +
+  geom_abline(aes(slope = 1, intercept = 0)) + 
+  geom_smooth(method = "lm", col = '#e79652', fill = '#e79652') +
+  theme(strip.background = element_blank(), strip.text = element_text(size = 10, hjust = 0), axis.text = element_text(size = 10, colour = 'black'), axis.title.y = element_text(size = 10, colour = 'black'), legend.position = "bottom", title = element_text(size = 10), axis.title.x = element_blank()) +
+  ylab("Relative invader growth\nrate from coinvasions") +
+  labs(title = expression(`(d)`~italic("Pseudomonas")~`sp.`))
+
+a <- ggplot(inv_dat3_a, aes(x = s_relfit, y = mean)) +
+  theme_bw()+
+  theme(strip.background = element_blank(), strip.text = element_text(size = 10, hjust = 0), axis.text = element_text(size = 10, colour = 'black'), axis.title.y = element_text(size = 10, colour = 'black'), legend.position = "bottom", title = element_text(size = 10), axis.title.x = element_blank()) +
+  geom_point(col = '#a06aa0') +
+  geom_abline(aes(slope = 1, intercept = 0)) + 
+  geom_smooth(method = "lm", col = '#a06aa0', fill = '#a06aa0') +
+  labs(title = expression(`(b)`~italic("Achromobacter")~`sp.`))+
+  ylab("Relative invader growth\nrate from coinvasions") 
+
+v <- ggplot(inv_dat3_v, aes(x = s_relfit, y = mean)) +
+  theme_bw()+
+  theme(strip.background = element_blank(), strip.text = element_text(size = 10, hjust = 0), axis.text = element_text(size = 10, colour = 'black'), axis.title = element_text(size = 10, colour = 'black'), legend.position = "bottom", title = element_text(size = 10)) +
+  geom_point(col = '#31646f') +
+  geom_abline(aes(slope = 1, intercept = 0)) + 
+  geom_smooth(method = "lm", col = '#31646f', fill = '#31646f') +
+  labs(title = expression(`(f)`~italic("Variovorax")~`sp.`))+
+  ylab("Relative invader growth\nrate from coinvasions") +
+  xlab("Relative invader growth\nrate from single invasions")
+
+s <- ggplot(inv_dat3_s, aes(x = s_relfit, y = mean)) +
+  theme_bw()+
+  theme(strip.background = element_blank(), strip.text = element_text(size = 10, hjust = 0), axis.text = element_text(size = 10, colour = 'black'), axis.title.y = element_blank(), legend.position = "bottom", title = element_text(size = 10), axis.title.x = element_text(size = 10, colour = 'black')) +
+  geom_point(col = '#85cdc4') +
+  geom_abline(aes(slope = 1, intercept = 0)) + 
+  geom_smooth(method = "lm", col = '#85cdc4', fill = '#85cdc4') +
+  labs(title = expression(`(e)`~italic("Stenotrophomonas")~`sp.`)) +
+  xlab("Relative invader growth\nrate from single invasions")
+
+o <- ggplot(inv_dat3_o, aes(x = s_relfit, y = mean)) +
+  theme_bw()+
+  theme(strip.background = element_blank(), strip.text = element_text(size = 10, hjust = 0), axis.text = element_text(size = 10, colour = 'black'), axis.title = element_blank(), legend.position = "bottom", title = element_text(size = 10)) +
+  geom_point(col = '#db596b') +
+  geom_abline(aes(slope = 1, intercept = 0)) + 
+  geom_smooth(method = "lm", col = '#db596b', fill = '#db596b') +
+  labs(title = expression(`(c)`~italic("Ochrobactrum")~`sp.`))+
+  ylab("Relative invader growth rate from coinvasions") 
+
+psavo <- a + o + p + s + v + patchwork::plot_layout(ncol = 2)
+
+a + psavo + patchwork::plot_layout()
+
+#
 
 inv_dat3$diff <- inv_dat3$s_relfit - inv_dat3$mean
 
@@ -281,6 +357,23 @@ all_invs3 <- mutate(all_invs3,
 all_invs_m <- group_by(all_invs2, Sp) %>%
   summarise(sig_t = sum(p.value < 0.05))
 
+possible_chars <- c("A", "O", "P", "S", "V")
+
+all_invs <- all_invs %>%
+  rowwise() %>%
+  mutate(coinvaders = paste(setdiff(possible_chars, str_split(paste(Sp, res.sp, sep = ""), "")[[1]]), collapse = "")) %>%
+  ungroup()
+
+all_invs2 <- all_invs2 %>%
+  rowwise() %>%
+  mutate(coinvaders = paste(setdiff(possible_chars, str_split(paste(Sp, res.sp, sep = ""), "")[[1]]), collapse = "")) %>%
+  ungroup()
+
+all_invs3 <- all_invs3 %>%
+  rowwise() %>%
+  mutate(coinvaders = paste(setdiff(possible_chars, str_split(paste(Sp, res.sp, sep = ""), "")[[1]]), collapse = "")) %>%
+  ungroup()
+
 #Figure 3
 
 ggplot() +
@@ -291,10 +384,12 @@ ggplot() +
   geom_text(data = all_invs2, aes(x = mean, y = res.sp, label = sig), nudge_x = 2, size = 5, nudge_y = -0.25) +
   theme(strip.background = element_blank(), strip.text = element_text(size = 12, hjust = 0), axis.text = element_text(size = 11, colour = 'black'), axis.title = element_text(size = 12, colour = 'black'), legend.position = "bottom", legend.text = element_text(size = 11)) + 
   geom_vline(xintercept=1) +
-  palettetown::scale_color_poke(pokemon = "blastoise", spread = 4, labels = c("Co-invasion", "Single invasion")) +
   ylab("Resident species") +
   xlab("Relative invader growth rate (m)") +
-  labs(col = 'Invasion type') 
+  labs(col = 'Invasion type') +  
+  geom_text(data = all_invs, aes(x = 5.8, y = res.sp, label = coinvaders), col = "#3F80C0") +
+  scale_color_manual(values = c('#3F80C0', '#684839'), labels = c("Co-invasion", "Single invasion")) +
+  scale_x_continuous(limits = c(0, 6.2))
 
 #Figure 3 - panel f
 
